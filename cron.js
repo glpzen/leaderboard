@@ -25,30 +25,28 @@ http.listen(3002, function () {
     console.log('listening on *:3002');
 });
 
-// create users as batch.
-// cron.schedule('0,5,10,15,20,25,30,35,40,45,50,55 * * * * *', () => {
-//     console.log('running a task every minute - for creating user');
-//     userController.createUser();
-// });
+// Should be run one time for insert user to the db.
+userController.createUser();
+
 
 cron.schedule('* * * * *', () => {
     console.log('updateCoinsForOnlineUsers - running a task every second');
     userController.updateCoinsForOnlineUsers();
 });
 
-cron.schedule('* * * * *', () => {
-    console.log('updateScoreAndLastScore - running a task every day (m)');
+cron.schedule('0 0 1-31 * *', () => {
+    console.log('updateScoreAndLastScore - At 00:00 on every day-of-month from 1 through 31.');
     userController.updateScoreAndLastScore();
 });
 
-cron.schedule('5,10,15,20,25,30,35,40,50,55 * * * *', () => {
-    console.log('distrubuteCoinToLeaderUsers - running a task every week (m)');
+cron.schedule('0 0 * * 7', () => {
+    console.log('distrubuteCoinToLeaderUsers - At 00:00 on Sunday.');
     userController.distrubuteCoinToLeaderUsers();
 });
 
 
-cron.schedule('* * * * *', () => {
-    console.log('getLeaderBoardUsers - running a task every 15 seconds');
+cron.schedule('* * * * * *', () => {
+    console.log('getLeaderBoardUsers - At every second from 1 through 59.');
     var currentUserId = '5c2bae15255f89673bf9fd6a';
     userController.getLeaderBoardUsers(currentUserId).then(function (users) {
         io.emit('leader-board', {users: users});
