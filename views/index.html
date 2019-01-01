@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.2/socket.io.js"></script>
+    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+        }
+    </style>
+</head>
+<div>
+    <h2>Leader Board</h2>
+
+
+    <table id="app" style="width:100%">
+        <tr>
+            <th>Change</th>
+            <th>Score</th>
+            <th>Name Surname</th>
+            <th>Age</th>
+            <th>Coin</th>
+        </tr>
+        <tr v-for="item in items">
+            <td><span v-if="(item.last_score - item.score) > 0">+</span>{{(item.last_score - item.score)}}</td>
+            <td>{{item.score}}</td>
+            <td>{{item.name}}</td>
+            <td>{{item.age}}</td>
+            <td>{{item.coin}}</td>
+        </tr>
+    </table>
+
+
+</div>
+<script>
+    var socket = io.connect('http://localhost:3002', {transports: ['websocket', 'polling', 'flashsocket']});
+
+    var app = new Vue({
+        el: "#app",
+        data: {
+            items: []
+        },
+        methods: {
+        }
+    });
+
+    socket.on('leader-board', function(data){
+        console.log({data});
+        app.items = data.users;
+    });
+</script>
+</html>
